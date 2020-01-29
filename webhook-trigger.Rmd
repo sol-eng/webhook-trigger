@@ -1,0 +1,28 @@
+---
+title: "webhook-trigger"
+author: "Cole Arendt"
+date: "1/29/2020"
+output: html_document
+params:
+  url:
+    input: text
+    label: Webhook URL
+    value: "http://ipecho.net/plain"
+  name:
+    input: text
+    label: Description of Task
+    value: "Echo my IP Address"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(httr)
+```
+
+# `r params$text`
+
+Calling `r params$url`
+
+```{r tag_url}
+httr::POST(url = params$url)
+```
