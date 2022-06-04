@@ -43,7 +43,7 @@ if (params$github) {
     httr::add_headers(
       Accept = "application/vnd.github.v3+json",
       Authorization = glue::glue("Bearer {Sys.getenv('GITHUB_PAT')}")
-      ),
+      )
     )
 } else {
   message("Running a NON-GitHub webhook")
