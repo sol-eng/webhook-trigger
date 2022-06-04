@@ -12,6 +12,14 @@ params:
     input: text
     label: Description of Task
     value: "Echo my IP Address"
+  github:
+    input: checkbox
+    label: Is this a GitHub Webhook?
+    value: false
+  json:
+    input: text
+    label: JSON data to use as the payload
+    value: "{}"
 ---
 
 ```{r setup, include=FALSE}
@@ -24,5 +32,27 @@ library(httr)
 Calling `r params$url`
 
 ```{r tag_url}
-httr::POST(url = params$url)
+if (params$github) {
+  message("Running a GitHub webhook")
+  if (Sys.getenv("GITHUB_PAT") == "") {
+    stop("GITHUB_PAT environment variable is required")
+  }
+  res <- httr::POST(
+    url = params$url, 
+    body = params$json,
+    httr::add_headers(
+      Accept = "application/vnd.github.v3+json",
+      Authorization = glue::glue("Bearer {Sys.getenv('GITHUB_PAT')}")
+      ),
+    )
+} else {
+  message("Running a NON-GitHub webhook")
+  res <- httr::POST(
+    url = params$url,
+    body = params$json,
+    )
+}
+
+httr::content(res)
+httr::http_status(res)
 ```
